@@ -28,7 +28,39 @@ func main() {
 		totalDistance += d
 	}
 
-	fmt.Println(totalDistance)
+	fmt.Println("distances: ", totalDistance)
+
+	scores := similarityScores(listA, listB)
+
+	var totalScores int32
+	for _, d := range scores {
+		totalScores += d
+	}
+
+	fmt.Println("scores: ", totalScores)
+}
+
+func similarityScores(a []int32, b []int32) []int32 {
+	var scores []int32
+	for _, id := range a {
+		timesInB := findElementCount(b, id)
+
+		score := id * timesInB
+		scores = append(scores, score)
+	}
+
+	return scores
+}
+
+func findElementCount(list []int32, id int32) int32 {
+	var count int32
+	for _, id2 := range list {
+		if id2 == id {
+			count++
+		}
+	}
+
+	return count
 }
 
 func getDistancesFromLists(a []int32, b []int32) []int32 {
