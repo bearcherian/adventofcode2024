@@ -15,7 +15,6 @@ func main() {
 	reports := getReports("input")
 
 	safeReports := getSafeReports(reports)
-
 	fmt.Println("safe reports: ", len(safeReports))
 }
 
@@ -25,7 +24,7 @@ func getSafeReports(reports [][]int) [][]int {
 
 	for _, report := range reports {
 
-		if isReportSafe(report) {
+		if isReportSafe(report, false) {
 			safeReports = append(safeReports, report)
 		}
 	}
@@ -34,35 +33,42 @@ func getSafeReports(reports [][]int) [][]int {
 
 }
 
-func isReportSafe(report []int) bool {
+func isReportSafe(report []int, isAdjusted bool) bool {
 
 	var isIncreasing bool
 	var isDecreasing bool
 	for i, level := range report {
+		// if this is the first one, skip it
 		if i == 0 {
 			continue
 		} 
 
+		prevLevel := report[i-1]
 		
-		if level < report[i-1] {
+		// if the next one is less, we are decreasing
+		if level < prevLevel {
 			isDecreasing = true
-		}
-		if level > report[i-1] {
+		} 
+		if level > prevLevel {
 			isIncreasing = true
+		} 
+
+		diff := level - prevLevel
+		absDiff := math.Abs(float64(diff)) 
+
+		var isInRange bool
+		if absDiff >= 1 && absDiff <=3 {
+			isInRange = true
 		}
 
-		if isIncreasing && isDecreasing {
+		if (isIncreasing && isDecreasing) || !isInRange {
+			// we have a bad level, can we remove it here? (part 2)
+			if !isAdjusted {
+				adjustedReport := append(report[:i], report[i+1:]...)
+				return isReportSafe(adjustedReport, true) // if the new report is bad, we don't 
+			}
 			return false
 		}	
-
-		diff := level - report[i-1]
-
-		absDiff := math.Abs(float64(diff)) 
-		if absDiff > 0 && absDiff < 4 {
-			continue
-		} else {
-			return false
-		}
 
 	}
 
