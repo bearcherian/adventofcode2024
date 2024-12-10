@@ -64,8 +64,13 @@ func isReportSafe(report []int, isAdjusted bool) bool {
 		if (isIncreasing && isDecreasing) || !isInRange {
 			// we have a bad level, can we remove it here? (part 2)
 			if !isAdjusted {
-				adjustedReport := append(report[:i], report[i+1:]...)
-				return isReportSafe(adjustedReport, true) // if the new report is bad, we don't 
+				// If this is item 1, check if removing item 0 makes it sage
+				if i == 1 {
+					adjustedReportA := report[1:] // could use 'i', but let's be explicit
+					if isReportSafe(adjustedReportA, true) { return true }
+				}
+				adjustedReportB := append(report[:i], report[i+1:]...)
+				return isReportSafe(adjustedReportB, true)// || isReportSafe(adjustedReportA, true)  // if the new report is bad, we don't 
 			}
 			return false
 		}	
